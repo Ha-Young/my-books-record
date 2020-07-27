@@ -43,14 +43,31 @@
   padding-left: 10px;
 }
 
-.link_url {
-  font-size: 12px;
-}
-
 .button_url {
+  padding: 5px;
   margin-right: 5px;
+  border-radius: 50%;
+  background-color: #1791ff;
+  border: 0.1px solid #1791ff;
+  color: white;
+  cursor: pointer;
 }
 
 .button_edit {
+  padding: 5px;
   margin-right: 5px;
+  border-radius: 50%;
+  border: 0.1px solid #999999;
+  color: black;
+  cursor: pointer;
+}
+
+.button_remove {
+  padding: 5px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background-color: #ff4d50;
+  border: 0.1px solid #ff4d50;
+  color: white;
+  cursor: pointer;
 }

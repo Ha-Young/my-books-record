@@ -17,6 +17,29 @@ const ListContainer: React.FC = () => {
     dispatch(logoutSaga());
   }, [dispatch]);
 
+  // Book Component에 전달하기 위한 클릭 리스너
+  const goDetail = useCallback(
+    (bookId: number) => {
+      console.log('goDetail');
+      dispatch(push(`/book/${bookId}`));
+    },
+    [dispatch],
+  );
+  const goEdit = useCallback(
+    (bookId: number) => {
+      console.log('goEdit');
+      dispatch(push(`/edit/${bookId}`));
+    },
+    [dispatch],
+  );
+  const removeBook = useCallback(
+    (bookId: number) => {
+      console.log('removeBook');
+      // dispatch(removeAction);
+    },
+    [dispatch],
+  );
+
   // [project] saga 함수를 실행하는 액션 생성 함수를 실행하는 함수를 컨테이너에 작성했다.
   const { books, loading, error } = useSelector(
     (state: RootState) => state.books,
@@ -36,7 +59,15 @@ const ListContainer: React.FC = () => {
       {error ? (
         <p style={{ textAlign: 'center' }}>애러발생!</p>
       ) : (
-        <List books={books} loading={loading} goAdd={goAdd} logout={logout} />
+        <List
+          books={books}
+          loading={loading}
+          goAdd={goAdd}
+          logout={logout}
+          goDetail={goDetail}
+          goEdit={goEdit}
+          removeBook={removeBook}
+        />
       )}
     </>
   );
