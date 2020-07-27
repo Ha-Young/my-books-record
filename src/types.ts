@@ -6,7 +6,17 @@ export interface BookReqType {
 }
 
 // [project] API 응답을 확인하여, BookResType 을 정의한다.
-export interface BookResType {}
+export interface BookResType {
+  author: string;
+  bookId: number;
+  createdAt: Date;
+  deletedAt: null;
+  message: string;
+  ownerId: string;
+  title: string;
+  updatedAt: Date;
+  url: string;
+}
 
 export interface LoginReqType {
   email: string;
