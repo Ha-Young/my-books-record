@@ -1,9 +1,12 @@
-import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import List from '../components/List';
 import { logout as logoutSaga } from '../redux/modules/auth';
 import { push } from 'connected-react-router';
+import { RootState } from '../redux/modules/rootReducer';
+import { getBooksAsync } from '../redux/modules/books';
+import useToken from '../hooks/useToken';
 
 const ListContainer: React.FC = () => {
   const dispatch = useDispatch();
@@ -15,9 +18,28 @@ const ListContainer: React.FC = () => {
   }, [dispatch]);
 
   // [project] saga 함수를 실행하는 액션 생성 함수를 실행하는 함수를 컨테이너에 작성했다.
+  const { books, loading, error } = useSelector(
+    (state: RootState) => state.books,
+  );
+  const token = useToken();
+
+  useEffect(() => {
+    console.log('ListContainer load');
+    console.log('token', token);
+
+    if (token) dispatch(getBooksAsync.request(token));
+  }, [dispatch, token]);
   // [project] 컨테이너에서 useDispatch, useSelector, useCallback 을 활용해서 중복없이 비동기 데이터를 보여주도록 처리했다.
 
-  return <List books={[]} loading={false} goAdd={goAdd} logout={logout} />;
+  return (
+    <>
+      {error ? (
+        <p style={{ textAlign: 'center' }}>애러발생!</p>
+      ) : (
+        <List books={books} loading={loading} goAdd={goAdd} logout={logout} />
+      )}
+    </>
+  );
 };
 
 export default ListContainer;
