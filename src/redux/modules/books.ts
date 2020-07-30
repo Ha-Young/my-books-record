@@ -22,6 +22,10 @@ const BOOK_EDIT = 'my-books/books/BOOK_EDIT' as const;
 const BOOK_EDIT_SUCCESS = 'my-books/books/BOOK_EDIT_SUCCESS' as const;
 const BOOK_EDIT_FAILURE = 'my-books/books/BOOK_EDIT_FAILURE' as const;
 
+const BOOK_REMOVE = 'my-books/books/BOOK_REMOVE' as const;
+const BOOK_REMOVE_SUCCESS = 'my-books/books/BOOK_REMOVE_SUCCESS' as const;
+const BOOK_REMOVE_FAILURE = 'my-books/books/BOOK_REMOVE_FAILURE' as const;
+
 // 책 가져오기 Action Creator
 export const getBooksAsync = createAsyncAction(
   BOOKS_REQUEST,
@@ -37,12 +41,19 @@ export const addBookAsync = createAsyncAction(
   BOOK_ADD_FAILURE,
 )<BookReqType, undefined, AxiosError>();
 
-// 책(detail) 가져오기 Action Creator
+// 책 수정하기 Action Creator
 export const editBookAsync = createAsyncAction(
   BOOK_EDIT,
   BOOK_EDIT_SUCCESS,
   BOOK_EDIT_FAILURE,
 )<BookEditReqType, undefined, AxiosError>();
+
+// 책 삭제하기 Action Creator
+export const removeBookAsync = createAsyncAction(
+  BOOK_REMOVE,
+  BOOK_REMOVE_SUCCESS,
+  BOOK_REMOVE_FAILURE,
+)<number, undefined, AxiosError>();
 
 //////////////////////////////////// Reducer ////////////////////////////////////
 export interface BooksState {
@@ -60,7 +71,8 @@ const initialState: BooksState = {
 type GETBooksAction =
   | ActionType<typeof getBooksAsync>
   | ActionType<typeof addBookAsync>
-  | ActionType<typeof editBookAsync>;
+  | ActionType<typeof editBookAsync>
+  | ActionType<typeof removeBookAsync>;
 
 const getBooksReducer = createReducer<BooksState, GETBooksAction>(
   initialState,
@@ -103,12 +115,27 @@ const getBooksReducer = createReducer<BooksState, GETBooksAction>(
       loading: true,
       error: null,
     }),
-    [BOOK_EDIT_SUCCESS]: (state, action) => ({
+    [BOOK_EDIT_SUCCESS]: (state) => ({
       ...state,
       loading: false,
       error: null,
     }),
     [BOOK_EDIT_FAILURE]: (state, action) => ({
+      ...state,
+      loading: false,
+      error: action.payload,
+    }),
+    [BOOK_REMOVE]: (state) => ({
+      ...state,
+      loading: true,
+      error: null,
+    }),
+    [BOOK_REMOVE_SUCCESS]: (state) => ({
+      ...state,
+      loading: false,
+      error: null,
+    }),
+    [BOOK_REMOVE_FAILURE]: (state, action) => ({
       ...state,
       loading: false,
       error: action.payload,
@@ -166,10 +193,23 @@ function* editBookSaga(action: ReturnType<typeof editBookAsync.request>) {
   }
 }
 
+function* removeBookSaga(action: ReturnType<typeof removeBookAsync.request>) {
+  try {
+    const token: string = yield select(getTokenFromState);
+    console.log('removeBookSaga', action, token);
+    yield call(BookService.deleteBook, token, action.payload);
+    yield put(removeBookAsync.success());
+    yield put(push('/'));
+  } catch (e) {
+    yield put(removeBookAsync.failure(e));
+  }
+}
+
 export function* sagas() {
   yield takeEvery(BOOKS_REQUEST, getBooksSaga);
   yield takeLatest(BOOK_ADD, addBookSaga);
   yield takeLatest(BOOK_EDIT, editBookSaga);
+  yield takeLatest(BOOK_REMOVE, removeBookSaga);
 }
 
 export default getBooksReducer;
