@@ -9,6 +9,7 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 
 interface BookProps {
   bookResType: BookResType;
@@ -34,18 +35,24 @@ const Book: React.FC<BookProps> = (bookProps) => {
       </span>
       <span className={cx('created')}>{bookProps.bookResType.createdAt}</span>
       <div className={cx('tooltips')}>
-        <HomeOutlined
-          className={cx('button_url')}
-          onClick={() => bookProps.goDetail(bookId)}
-        />
-        <EditOutlined
-          className={cx('button_edit')}
-          onClick={() => bookProps.goEdit(bookId)}
-        />
-        <DeleteOutlined
-          className={cx('button_remove')}
-          onClick={() => bookProps.removeBook(bookId)}
-        />
+        <Tooltip title={bookProps.bookResType.url}>
+          <HomeOutlined
+            className={cx('button_url')}
+            onClick={() => bookProps.goDetail(bookId)}
+          />
+        </Tooltip>
+        <Tooltip title="Edit">
+          <EditOutlined
+            className={cx('button_edit')}
+            onClick={() => bookProps.goEdit(bookId)}
+          />
+        </Tooltip>
+        <Tooltip title="Delete">
+          <DeleteOutlined
+            className={cx('button_remove')}
+            onClick={() => bookProps.removeBook(bookId)}
+          />
+        </Tooltip>
       </div>
     </div>
   );
