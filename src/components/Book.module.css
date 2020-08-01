@@ -9,6 +9,12 @@
   font-size: 14px;
   font-weight: 700;
   padding-left: 10px;
+  transition: color 0.3s;
+}
+
+.title:hover {
+  color: #1791ff;
+  cursor: pointer;
 }
 
 .link_detail_title {
@@ -21,6 +27,12 @@
   font-size: 14px;
   font-weight: 700;
   padding-left: 10px;
+  transition: color 0.3s;
+}
+
+.author:hover {
+  color: #1791ff;
+  cursor: pointer;
 }
 
 .link_detail_author {
@@ -53,6 +65,12 @@
   cursor: pointer;
 }
 
+.button_url:hover {
+  color: #fff;
+  background-color: #40a9ff;
+  border-color: #40a9ff;
+}
+
 .button_edit {
   padding: 5px;
   margin-right: 5px;
@@ -60,6 +78,13 @@
   border: 0.1px solid #999999;
   color: black;
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.button_edit:hover {
+  color: #40a9ff;
+  background-color: #fff;
+  border-color: #40a9ff;
 }
 
 .button_remove {
@@ -70,4 +95,10 @@
   border: 0.1px solid #ff4d50;
   color: white;
   cursor: pointer;
+}
+
+.button_remove:hover {
+  color: #fff;
+  background-color: #ff7875;
+  border-color: #ff7875;
 }
