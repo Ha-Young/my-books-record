@@ -10,6 +10,7 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 import { Tooltip } from 'antd';
+import { formatDate } from '../common';
 
 interface BookProps {
   bookResType: BookResType;
@@ -33,7 +34,9 @@ const Book: React.FC<BookProps> = (bookProps) => {
       <span className={cx('author', 'link_detail_author')}>
         {bookProps.bookResType.author}
       </span>
-      <span className={cx('created')}>{bookProps.bookResType.createdAt}</span>
+      <span className={cx('created')}>
+        {formatDate(bookProps.bookResType.createdAt)}
+      </span>
       <div className={cx('tooltips')}>
         <Tooltip title={bookProps.bookResType.url}>
           <HomeOutlined

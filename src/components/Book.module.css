@@ -60,9 +60,9 @@
   margin-right: 5px;
   border-radius: 50%;
   background-color: #1791ff;
-  border: 0.1px solid #1791ff;
   color: white;
   cursor: pointer;
+  text-align: center;
 }
 
 .button_url:hover {
@@ -72,11 +72,11 @@
 }
 
 .button_edit {
-  padding: 5px;
+  padding: 4px;
   margin-right: 5px;
   border-radius: 50%;
-  border: 0.1px solid #999999;
-  color: black;
+  border: 1px solid #d9d9d9;
+  color: rgba(0, 0, 0, 0.65);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
@@ -92,7 +92,6 @@
   margin-right: 5px;
   border-radius: 50%;
   background-color: #ff4d50;
-  border: 0.1px solid #ff4d50;
   color: white;
   cursor: pointer;
 }
