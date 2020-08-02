@@ -6,6 +6,7 @@ import { logout as logoutSaga } from '../redux/modules/auth';
 import { BookParams } from '../types';
 import { RootState } from '../redux/modules/rootReducer';
 import { push } from 'connected-react-router';
+import useBook from '../hooks/useBook';
 
 const DetailContainer = ({ id }: BookParams) => {
   console.log('Detail Container', id);
@@ -25,10 +26,8 @@ const DetailContainer = ({ id }: BookParams) => {
     },
     [dispatch],
   );
+  const book = useBook(parseInt(id));
 
-  const books = useSelector((state: RootState) => state.books.books);
-  console.log('Detail Container...use Selector books', books);
-  const book = books?.find((book) => book.bookId === parseInt(id));
   return <Detail book={book} logout={logout} goEdit={goEdit} />;
 };
 
