@@ -11,11 +11,12 @@ const { TextArea } = Input;
 interface DetailProps {
   book: BookResType | null | undefined;
   logout: () => void;
+  goEdit: (bookId: number) => void;
 }
 
 // [project] 컨테이너에 작성된 함수를 컴포넌트에서 이용했다.
 // [project] BookResType 의 응답 값을 이용하여, Detail 컴포넌트를 완성했다.
-const Detail: React.FC<DetailProps> = ({ book, logout }) => {
+const Detail: React.FC<DetailProps> = ({ book, logout, goEdit }) => {
   console.log('Detail', book);
   if (book === null) {
     return null;
@@ -23,8 +24,18 @@ const Detail: React.FC<DetailProps> = ({ book, logout }) => {
 
   if (book === undefined) {
     return (
-      <div>
+      <div
+        style={{
+          width: '100vw',
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <h1>NotFound Book</h1>
+        <h3>this is incorrect access</h3>
       </div>
     );
   }
@@ -75,6 +86,10 @@ const Detail: React.FC<DetailProps> = ({ book, logout }) => {
     </Layout>
   );
 
-  function onEditClick() {}
+  function onEditClick() {
+    if (book && book.bookId) {
+      goEdit(book?.bookId);
+    }
+  }
 };
 export default Detail;
