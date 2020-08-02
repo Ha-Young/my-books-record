@@ -38,21 +38,21 @@ export const addBookAsync = createAsyncAction(
   BOOK_ADD,
   BOOK_ADD_SUCCESS,
   BOOK_ADD_FAILURE,
-)<BookReqType, undefined, AxiosError>();
+)<BookReqType, BookResType, AxiosError>();
 
 // 책 수정하기 Action Creator
 export const editBookAsync = createAsyncAction(
   BOOK_EDIT,
   BOOK_EDIT_SUCCESS,
   BOOK_EDIT_FAILURE,
-)<BookEditReqType, undefined, AxiosError>();
+)<BookEditReqType, BookResType, AxiosError>();
 
 // 책 삭제하기 Action Creator
 export const removeBookAsync = createAsyncAction(
   BOOK_REMOVE,
   BOOK_REMOVE_SUCCESS,
   BOOK_REMOVE_FAILURE,
-)<number, undefined, AxiosError>();
+)<number, number, AxiosError>();
 
 //////////////////////////////////// Reducer ////////////////////////////////////
 export interface BooksState {
@@ -99,9 +99,13 @@ const getBooksReducer = createReducer<BooksState, GETBooksAction>(
       loading: true,
       error: null,
     }),
-    [BOOK_ADD_SUCCESS]: (state) => ({
+    [BOOK_ADD_SUCCESS]: (state, action) => ({
       ...state,
       loading: false,
+      books:
+        state.books && action.payload
+          ? state.books.concat(action.payload)
+          : state.books,
       error: null,
     }),
     [BOOK_ADD_FAILURE]: (state, action) => ({
@@ -114,9 +118,15 @@ const getBooksReducer = createReducer<BooksState, GETBooksAction>(
       loading: true,
       error: null,
     }),
-    [BOOK_EDIT_SUCCESS]: (state) => ({
+    [BOOK_EDIT_SUCCESS]: (state, action) => ({
       ...state,
       loading: false,
+      books:
+        state.books && action.payload
+          ? state.books.map((book) =>
+              book.bookId === action.payload.bookId ? action.payload : book,
+            )
+          : state.books,
       error: null,
     }),
     [BOOK_EDIT_FAILURE]: (state, action) => ({
@@ -129,9 +139,13 @@ const getBooksReducer = createReducer<BooksState, GETBooksAction>(
       loading: true,
       error: null,
     }),
-    [BOOK_REMOVE_SUCCESS]: (state) => ({
+    [BOOK_REMOVE_SUCCESS]: (state, action) => ({
       ...state,
       loading: false,
+      books:
+        state.books && action.payload
+          ? state.books.filter((book) => book.bookId !== action.payload)
+          : state.books,
       error: null,
     }),
     [BOOK_REMOVE_FAILURE]: (state, action) => ({
@@ -165,7 +179,7 @@ function* addBookSaga(action: ReturnType<typeof addBookAsync.request>) {
       action.payload,
     );
     console.log('addBook :', book);
-    yield put(addBookAsync.success());
+    yield put(addBookAsync.success(book));
     yield put(push('/'));
   } catch (e) {
     yield put(addBookAsync.failure(e));
@@ -182,11 +196,11 @@ function* editBookSaga(action: ReturnType<typeof editBookAsync.request>) {
       action.payload.bookId,
       action.payload.bookReq,
     );
-    console.log('addBook :', book);
-    yield put(addBookAsync.success());
+    console.log('editBook :', book);
+    yield put(editBookAsync.success(book));
     yield put(push('/'));
   } catch (e) {
-    yield put(addBookAsync.failure(e));
+    yield put(editBookAsync.failure(e));
   }
 }
 
@@ -194,8 +208,9 @@ function* removeBookSaga(action: ReturnType<typeof removeBookAsync.request>) {
   try {
     const token: string = yield select(getTokenFromState);
     console.log('removeBookSaga', action, token);
-    yield call(BookService.deleteBook, token, action.payload);
-    yield put(removeBookAsync.success());
+    const deleteId = action.payload;
+    yield call(BookService.deleteBook, token, deleteId);
+    yield put(removeBookAsync.success(deleteId));
     yield put(push('/'));
   } catch (e) {
     yield put(removeBookAsync.failure(e));
