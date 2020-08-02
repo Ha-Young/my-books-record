@@ -1,5 +1,10 @@
 import { BookResType, BookReqType, BookEditReqType } from '../../types';
-import { createAsyncAction, createReducer, ActionType } from 'typesafe-actions';
+import {
+  createAsyncAction,
+  createReducer,
+  ActionType,
+  createAction,
+} from 'typesafe-actions';
 import { AxiosError } from 'axios';
 import { call, put, takeEvery, takeLatest, select } from 'redux-saga/effects';
 import BookService from '../../services/BookService';
@@ -7,52 +12,38 @@ import { getTokenFromState } from '../utils';
 import { push } from 'connected-react-router';
 
 //////////////////////////////////// Action ////////////////////////////////////
-// 책 목록 가져오기 Action Type
-const BOOKS_REQUEST = 'my-books/books/BOOKS_REQUEST' as const;
+const BOOKS_GETLIST = 'my-books/books/BOOKS_REQUEST' as const; // 책 목록 가져오기 Action Type
+const BOOKS_ADD = 'my-books/books/BOOK_ADD' as const; // 책 추가하기 Action Type
+const BOOKS_EDIT = 'my-books/books/BOOK_EDIT' as const; // 책 수정하기 Action Type
+const BOOKS_REMOVE = 'my-books/books/BOOK_REMOVE' as const; // 책 삭제하기 Action Type
+
+const BOOKS_PENDING = 'my-books/books/BOOKS_PENDING' as const;
 const BOOKS_SUCCESS = 'my-books/books/BOOKS_SUCCESS' as const;
 const BOOKS_FAILURE = 'my-books/books/BOOKS_FAILURE' as const;
 
-// 책 추가하기 Action Type
-const BOOK_ADD = 'my-books/books/BOOK_ADD' as const;
-const BOOK_ADD_SUCCESS = 'my-books/books/BOOK_ADD_SUCCESS' as const;
-const BOOK_ADD_FAILURE = 'my-books/books/BOOK_ADD_FAILURE' as const;
-
-// 책 가져오기 Action Type
-const BOOK_EDIT = 'my-books/books/BOOK_EDIT' as const;
-const BOOK_EDIT_SUCCESS = 'my-books/books/BOOK_EDIT_SUCCESS' as const;
-const BOOK_EDIT_FAILURE = 'my-books/books/BOOK_EDIT_FAILURE' as const;
-
-const BOOK_REMOVE = 'my-books/books/BOOK_REMOVE' as const;
-const BOOK_REMOVE_SUCCESS = 'my-books/books/BOOK_REMOVE_SUCCESS' as const;
-const BOOK_REMOVE_FAILURE = 'my-books/books/BOOK_REMOVE_FAILURE' as const;
-
-// 책 가져오기 Action Creator
-export const getBooksAsync = createAsyncAction(
-  BOOKS_REQUEST,
+// AsyncAction Creator
+export const booksAsync = createAsyncAction(
+  BOOKS_PENDING,
   BOOKS_SUCCESS,
   BOOKS_FAILURE,
 )<undefined, BookResType[], AxiosError>();
 
-// 책 추가하기 Action Creator
-export const addBookAsync = createAsyncAction(
-  BOOK_ADD,
-  BOOK_ADD_SUCCESS,
-  BOOK_ADD_FAILURE,
-)<BookReqType, BookResType, AxiosError>();
+export const getBooks = createAction(BOOKS_GETLIST)(); // 책 가져오기 Action Creator
 
-// 책 수정하기 Action Creator
-export const editBookAsync = createAsyncAction(
-  BOOK_EDIT,
-  BOOK_EDIT_SUCCESS,
-  BOOK_EDIT_FAILURE,
-)<BookEditReqType, BookResType, AxiosError>();
+export const addBooks = createAction(
+  BOOKS_ADD,
+  (addBook: BookReqType) => addBook,
+)(); // 책 추가하기 Action Creator
 
-// 책 삭제하기 Action Creator
-export const removeBookAsync = createAsyncAction(
-  BOOK_REMOVE,
-  BOOK_REMOVE_SUCCESS,
-  BOOK_REMOVE_FAILURE,
-)<number, number, AxiosError>();
+export const editBooks = createAction(
+  BOOKS_EDIT,
+  (editBook: BookEditReqType) => editBook,
+)(); // 책 수정하기 Action Creator
+
+export const removeBooks = createAction(
+  BOOKS_REMOVE,
+  (removeBookId: number) => removeBookId,
+)(); // 책 삭제하기 Action Creator
 
 //////////////////////////////////// Reducer ////////////////////////////////////
 export interface BooksState {
@@ -67,19 +58,17 @@ const initialState: BooksState = {
   error: null,
 };
 
+const actions = { getBooks, addBooks, editBooks, removeBooks };
 type GETBooksAction =
-  | ActionType<typeof getBooksAsync>
-  | ActionType<typeof addBookAsync>
-  | ActionType<typeof editBookAsync>
-  | ActionType<typeof removeBookAsync>;
+  | ActionType<typeof booksAsync>
+  | ActionType<typeof actions>;
 
 const getBooksReducer = createReducer<BooksState, GETBooksAction>(
   initialState,
   {
-    [BOOKS_REQUEST]: (state) => ({
+    [BOOKS_PENDING]: (state) => ({
       ...state,
       loading: true,
-      books: null,
       error: null,
     }),
     [BOOKS_SUCCESS]: (state, action) => ({
@@ -94,64 +83,26 @@ const getBooksReducer = createReducer<BooksState, GETBooksAction>(
       books: null,
       error: action.payload,
     }),
-    [BOOK_ADD]: (state) => ({
+    [BOOKS_GETLIST]: (state) => ({
+      ...state,
+      loading: true,
+      books: null,
+      error: null,
+    }),
+    [BOOKS_ADD]: (state, action) => ({
       ...state,
       loading: true,
       error: null,
     }),
-    [BOOK_ADD_SUCCESS]: (state, action) => ({
-      ...state,
-      loading: false,
-      books:
-        state.books && action.payload
-          ? state.books.concat(action.payload)
-          : state.books,
-      error: null,
-    }),
-    [BOOK_ADD_FAILURE]: (state, action) => ({
-      ...state,
-      loading: false,
-      error: action.payload,
-    }),
-    [BOOK_EDIT]: (state) => ({
+    [BOOKS_EDIT]: (state, action) => ({
       ...state,
       loading: true,
       error: null,
     }),
-    [BOOK_EDIT_SUCCESS]: (state, action) => ({
-      ...state,
-      loading: false,
-      books:
-        state.books && action.payload
-          ? state.books.map((book) =>
-              book.bookId === action.payload.bookId ? action.payload : book,
-            )
-          : state.books,
-      error: null,
-    }),
-    [BOOK_EDIT_FAILURE]: (state, action) => ({
-      ...state,
-      loading: false,
-      error: action.payload,
-    }),
-    [BOOK_REMOVE]: (state) => ({
+    [BOOKS_REMOVE]: (state, action) => ({
       ...state,
       loading: true,
       error: null,
-    }),
-    [BOOK_REMOVE_SUCCESS]: (state, action) => ({
-      ...state,
-      loading: false,
-      books:
-        state.books && action.payload
-          ? state.books.filter((book) => book.bookId !== action.payload)
-          : state.books,
-      error: null,
-    }),
-    [BOOK_REMOVE_FAILURE]: (state, action) => ({
-      ...state,
-      loading: false,
-      error: action.payload,
     }),
   },
 );
@@ -159,6 +110,7 @@ const getBooksReducer = createReducer<BooksState, GETBooksAction>(
 //////////////////////////////////// SAGA ////////////////////////////////////
 function* getBooksSaga(action: ReturnType<typeof getBooksAsync.request>) {
   try {
+    yield put(BOOKS_PENDING);
     const token: string = yield select(getTokenFromState); // token 값을 가져온다.
     console.log('getBooksSaga', action, token);
     const books: BookResType[] = yield call(BookService.getBooks, token);
