@@ -3,8 +3,9 @@ import { useDispatch } from 'react-redux';
 
 import Edit from '../components/Edit';
 import { logout as logoutSaga } from '../redux/modules/auth';
-import { BookParams } from '../types';
+import { BookParams, BookEditReqType } from '../types';
 import useBook from '../hooks/useBook';
+import { editBookAsync } from '../redux/modules/books';
 
 const EditContainer = ({ id }: BookParams) => {
   const dispatch = useDispatch();
@@ -16,8 +17,12 @@ const EditContainer = ({ id }: BookParams) => {
   // [project] 컨테이너에서 useDispatch, useSelector, useCallback 을 활용해서 중복없이 비동기 데이터를 보여주도록 처리했다.
   // [project] Edit 나 Detail 컴포넌트에서 새로고침 시, 리스트가 없는 경우, 리스트를 받아오도록 처리했다.
   const book = useBook(parseInt(id));
+  const updateBook = (editBook: BookEditReqType) => {
+    console.log(updateBook, editBook);
+    dispatch(editBookAsync.request(editBook));
+  };
 
-  return <Edit book={book} loading={false} logout={logout} />;
+  return <Edit book={book} logout={logout} updateBook={updateBook} />;
 };
 
 export default EditContainer;

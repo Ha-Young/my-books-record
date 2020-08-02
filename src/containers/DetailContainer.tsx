@@ -1,10 +1,9 @@
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import Detail from '../components/Detail';
 import { logout as logoutSaga } from '../redux/modules/auth';
 import { BookParams } from '../types';
-import { RootState } from '../redux/modules/rootReducer';
 import { push } from 'connected-react-router';
 import useBook from '../hooks/useBook';
 

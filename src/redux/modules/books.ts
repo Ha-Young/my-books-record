@@ -175,7 +175,7 @@ function* addBookSaga(action: ReturnType<typeof addBookAsync.request>) {
 function* editBookSaga(action: ReturnType<typeof editBookAsync.request>) {
   try {
     const token: string = yield select(getTokenFromState); // token 값을 가져온다.
-    console.log('getBookDetailSaga', action, token);
+    console.log('editBookSaga', action, token);
     const book: BookResType = yield call(
       BookService.editBook,
       token,

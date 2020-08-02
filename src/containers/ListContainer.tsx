@@ -49,9 +49,8 @@ const ListContainer: React.FC = () => {
   useEffect(() => {
     console.log('ListContainer load');
     console.log('token', token);
-    if (books) return;
     if (token) dispatch(getBooksAsync.request());
-  }, [dispatch, token, books]);
+  }, [dispatch, token]);
   // [project] 컨테이너에서 useDispatch, useSelector, useCallback 을 활용해서 중복없이 비동기 데이터를 보여주도록 처리했다.
 
   return (

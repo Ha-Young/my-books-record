@@ -18,11 +18,7 @@ interface DetailProps {
 // [project] BookResType 의 응답 값을 이용하여, Detail 컴포넌트를 완성했다.
 const Detail: React.FC<DetailProps> = ({ book, logout, goEdit }) => {
   console.log('Detail', book);
-  if (book === null) {
-    return null;
-  }
-
-  if (book === undefined) {
+  if (book == null) {
     return (
       <div
         style={{
