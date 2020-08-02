@@ -1,3 +1,6 @@
+import * as H from 'history';
+import { match } from 'react-router-dom';
+
 export interface BookReqType {
   title: string;
   author: string;
@@ -30,4 +33,15 @@ export interface LoginReqType {
 
 export interface LoginResType {
   token: string;
+}
+
+export interface RouterComponentProps<P> {
+  match: match<P>;
+  location: H.Location;
+  history: H.History;
+  staticContext?: any;
+}
+
+export interface BookParams {
+  id: string;
 }

@@ -31,8 +31,7 @@ export const getBooksAsync = createAsyncAction(
   BOOKS_REQUEST,
   BOOKS_SUCCESS,
   BOOKS_FAILURE,
-)<string, BookResType[], AxiosError>();
-// 수정 요구 - string -> undefined : token useToken 대신 사가에서 받아서 처리할 것.
+)<undefined, BookResType[], AxiosError>();
 
 // 책 추가하기 Action Creator
 export const addBookAsync = createAsyncAction(
@@ -146,11 +145,9 @@ const getBooksReducer = createReducer<BooksState, GETBooksAction>(
 //////////////////////////////////// SAGA ////////////////////////////////////
 function* getBooksSaga(action: ReturnType<typeof getBooksAsync.request>) {
   try {
-    console.log('getBooksSaga', action);
-    const books: BookResType[] = yield call(
-      BookService.getBooks,
-      action.payload,
-    );
+    const token: string = yield select(getTokenFromState); // token 값을 가져온다.
+    console.log('getBooksSaga', action, token);
+    const books: BookResType[] = yield call(BookService.getBooks, token);
     console.log('getBooks : ', books);
     yield put(getBooksAsync.success(books));
   } catch (e) {

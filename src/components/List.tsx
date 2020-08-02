@@ -65,7 +65,7 @@ const Books: React.FC<BooksProps> = ({
                 goDetail={goDetail}
                 goEdit={goEdit}
                 removeBook={removeBook}
-                key={'{record.bookId}'}
+                key={record.bookId}
               />
             ),
           },

@@ -28,10 +28,16 @@ const Book: React.FC<BookProps> = (bookProps) => {
 
   return (
     <div className={cx('book')}>
-      <h5 className={cx('title', 'link_detail_title')}>
+      <h5
+        className={cx('title', 'link_detail_title')}
+        onClick={() => bookProps.goDetail(bookId)}
+      >
         <BookOutlined /> {bookProps.bookResType.title}
       </h5>
-      <span className={cx('author', 'link_detail_author')}>
+      <span
+        className={cx('author', 'link_detail_author')}
+        onClick={() => bookProps.goDetail(bookId)}
+      >
         {bookProps.bookResType.author}
       </span>
       <span className={cx('created')}>
