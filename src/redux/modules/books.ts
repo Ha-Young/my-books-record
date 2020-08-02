@@ -91,9 +91,7 @@ function* getBooksSaga(action: ReturnType<typeof getBooks>) {
   try {
     yield put(booksAsync.request());
     const token: string = yield select(getTokenFromState); // token 값을 가져온다.
-    console.log('getBooksSaga', action, token);
     const books: BookResType[] = yield call(BookService.getBooks, token);
-    console.log('getBooks : ', books);
     yield put(booksAsync.success(books));
   } catch (e) {
     yield put(booksAsync.failure(e));
@@ -105,15 +103,12 @@ function* addBookSaga(action: ReturnType<typeof addBooks>) {
     yield put(booksAsync.request());
     const token: string = yield select(getTokenFromState); // token 값을 가져온다.
     const books: BookResType[] = yield select(getBooksFromState); // books 값을 가져온다.
-    console.log('addBookSaga', action, token, books);
     const addBook: BookResType = yield call(
       BookService.addBook,
       token,
       action.payload,
     );
-    console.log('addBook :', addBook);
     const addedBooks = books.concat(addBook);
-    console.log('addedBooks:', addBooks);
     yield put(booksAsync.success(addedBooks));
     yield put(push('/'));
   } catch (e) {
@@ -126,18 +121,15 @@ function* editBookSaga(action: ReturnType<typeof editBooks>) {
     yield put(booksAsync.request());
     const token: string = yield select(getTokenFromState); // token 값을 가져온다.
     const books: BookResType[] = yield select(getBooksFromState); // books 값을 가져온다.
-    console.log('editBookSaga', action, token, books);
     const editBook: BookResType = yield call(
       BookService.editBook,
       token,
       action.payload.bookId,
       action.payload.bookReq,
     );
-    console.log('editBook :', editBook);
     const editedBooks = books.map((book) =>
       book.bookId === editBook.bookId ? editBook : book,
     );
-    console.log('editedBooks : ', editedBooks);
     yield put(booksAsync.success(editedBooks));
     yield put(push('/'));
   } catch (e) {
@@ -150,9 +142,7 @@ function* removeBookSaga(action: ReturnType<typeof removeBooks>) {
     yield put(booksAsync.request());
     const token: string = yield select(getTokenFromState); // token 값을 가져온다.
     const books: BookResType[] = yield select(getBooksFromState); // books 값을 가져온다.
-    console.log('removeBookSaga', action, token, books);
     const deleteId = action.payload;
-    console.log('deleteId : ', deleteId);
     yield call(BookService.deleteBook, token, deleteId);
     const removedBooks = books.filter((book) => book.bookId !== deleteId);
     yield put(booksAsync.success(removedBooks));

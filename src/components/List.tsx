@@ -27,7 +27,6 @@ const Books: React.FC<BooksProps> = ({
   goEdit,
   removeBook,
 }) => {
-  console.log('Books List Component', books);
   return (
     <Layout>
       <PageHeader

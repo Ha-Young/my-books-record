@@ -22,8 +22,6 @@ const Edit: React.FC<EditProps> = ({ book, logout, updateBook, goBack }) => {
   const authorRef = useRef<Input>(null);
   const urlRef = useRef<Input>(null);
 
-  console.log('Edit', book);
-
   if (book == null) {
     return (
       <div

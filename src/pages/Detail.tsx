@@ -6,7 +6,6 @@ import DetailContainer from '../containers/DetailContainer';
 import { RouterComponentProps, BookParams } from '../types';
 
 const Detail = ({ match }: RouterComponentProps<BookParams>) => {
-  console.log('Detail Page', match);
   const token = useToken();
   if (token === null) {
     return <Redirect to="/signin" />;

@@ -6,7 +6,6 @@ import { logout as logoutSaga } from '../redux/modules/auth';
 import { BookParams, BookEditReqType } from '../types';
 import useBook from '../hooks/useBook';
 import { editBooks } from '../redux/modules/books';
-import { goBack } from 'connected-react-router';
 import useGo from '../hooks/useGo';
 
 const EditContainer = ({ id }: BookParams) => {
@@ -20,7 +19,6 @@ const EditContainer = ({ id }: BookParams) => {
   // [project] Edit 나 Detail 컴포넌트에서 새로고침 시, 리스트가 없는 경우, 리스트를 받아오도록 처리했다.
   const book = useBook(parseInt(id));
   const updateBook = (editBook: BookEditReqType) => {
-    console.log(updateBook, editBook);
     dispatch(editBooks(editBook));
   };
 

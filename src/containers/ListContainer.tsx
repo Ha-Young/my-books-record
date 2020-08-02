@@ -18,7 +18,6 @@ const ListContainer: React.FC = () => {
 
   const removeBook = useCallback(
     (bookId: number) => {
-      console.log('removeBook');
       dispatch(removeBooks(bookId));
     },
     [dispatch],

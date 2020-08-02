@@ -29,7 +29,6 @@ export default function useGo(): useGoRetType {
 
   const goDetail = useCallback(
     (bookId: number) => {
-      console.log('goDetail');
       dispatch(push(`/book/${bookId}`));
     },
     [dispatch],

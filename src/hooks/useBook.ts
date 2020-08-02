@@ -3,7 +3,6 @@ import { RootState } from '../redux/modules/rootReducer';
 
 export default function useBook(id: number) {
   const books = useSelector((state: RootState) => state.books.books);
-  console.log('Edit Container...use Selector books', books);
 
   if (books == null) return null;
 

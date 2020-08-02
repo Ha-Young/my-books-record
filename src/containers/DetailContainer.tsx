@@ -8,8 +8,6 @@ import useBook from '../hooks/useBook';
 import useGo from '../hooks/useGo';
 
 const DetailContainer = ({ id }: BookParams) => {
-  console.log('Detail Container', id);
-
   const dispatch = useDispatch();
   const logout = useCallback(() => {
     dispatch(logoutSaga());
