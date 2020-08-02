@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import 'antd/dist/antd.css';
+
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import create from './redux/create';
-import { Provider } from 'react-redux';
 
 const store = create();
 

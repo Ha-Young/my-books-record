@@ -2,18 +2,17 @@ import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import List from '../components/List';
-import { logout as logoutSaga } from '../redux/modules/auth';
 import { RootState } from '../redux/modules/rootReducer';
 import { getBooks, removeBooks } from '../redux/modules/books';
 import useGo from '../hooks/useGo';
+import { useAuth } from '../hooks/useAuth';
 
 const ListContainer: React.FC = () => {
   const dispatch = useDispatch();
-  const logout = useCallback(() => {
-    dispatch(logoutSaga());
-  }, [dispatch]);
 
   // Book Component에 전달하기 위한 클릭 리스너
+  const { logout } = useAuth();
+
   const { goAdd, goDetail, goEdit } = useGo();
 
   const removeBook = useCallback(

@@ -1,4 +1,3 @@
-import { BookResType, BookReqType, BookEditReqType } from '../../types';
 import {
   createAsyncAction,
   createReducer,
@@ -7,9 +6,11 @@ import {
 } from 'typesafe-actions';
 import { AxiosError } from 'axios';
 import { call, put, takeEvery, takeLatest, select } from 'redux-saga/effects';
+import { push } from 'connected-react-router';
+
+import { BookResType, BookReqType, BookEditReqType } from '../../types';
 import BookService from '../../services/BookService';
 import { getTokenFromState, getBooksFromState } from '../utils';
-import { push } from 'connected-react-router';
 
 //////////////////////////////////// Action ////////////////////////////////////
 const BOOKS_GETLIST = 'my-books/books/BOOKS_GETLIST' as const; // 책 목록 가져오기 Action Type
