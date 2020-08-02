@@ -83,18 +83,6 @@ const getBooksReducer = createReducer<BooksState, GETBooksAction>(
       books: null,
       error: action.payload,
     }),
-    [BOOKS_GETLIST]: (state) => ({
-      ...state,
-    }),
-    [BOOKS_ADD]: (state) => ({
-      ...state,
-    }),
-    [BOOKS_EDIT]: (state) => ({
-      ...state,
-    }),
-    [BOOKS_REMOVE]: (state) => ({
-      ...state,
-    }),
   },
 );
 
