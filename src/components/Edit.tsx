@@ -11,11 +11,12 @@ interface EditProps {
   book: BookResType | undefined | null;
   logout: () => void;
   updateBook: (editBook: BookEditReqType) => void;
+  goBack: () => void;
 }
 
 // [project] 컨테이너에 작성된 함수를 컴포넌트에서 이용했다.
 // [project] BookResType 의 응답 값을 이용하여, Edit 컴포넌트를 완성했다.
-const Edit: React.FC<EditProps> = ({ book, logout, updateBook }) => {
+const Edit: React.FC<EditProps> = ({ book, logout, updateBook, goBack }) => {
   const titleRef = useRef<Input>(null);
   const messageRef = useRef<TextArea>(null);
   const authorRef = useRef<Input>(null);
@@ -44,6 +45,7 @@ const Edit: React.FC<EditProps> = ({ book, logout, updateBook }) => {
   return (
     <Layout>
       <PageHeader
+        onBack={goBack}
         title={
           <div>
             <FormOutlined /> Edit Book

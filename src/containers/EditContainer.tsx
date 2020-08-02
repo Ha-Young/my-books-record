@@ -6,6 +6,7 @@ import { logout as logoutSaga } from '../redux/modules/auth';
 import { BookParams, BookEditReqType } from '../types';
 import useBook from '../hooks/useBook';
 import { editBooks } from '../redux/modules/books';
+import { goBack } from 'connected-react-router';
 
 const EditContainer = ({ id }: BookParams) => {
   const dispatch = useDispatch();
@@ -21,8 +22,18 @@ const EditContainer = ({ id }: BookParams) => {
     console.log(updateBook, editBook);
     dispatch(editBooks(editBook));
   };
+  const onGoBack = () => {
+    dispatch(goBack());
+  };
 
-  return <Edit book={book} logout={logout} updateBook={updateBook} />;
+  return (
+    <Edit
+      book={book}
+      logout={logout}
+      updateBook={updateBook}
+      goBack={onGoBack}
+    />
+  );
 };
 
 export default EditContainer;

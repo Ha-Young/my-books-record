@@ -5,6 +5,7 @@ import Add from '../components/Add';
 import { logout as logoutSaga } from '../redux/modules/auth';
 import { BookReqType } from '../types';
 import { addBooks } from '../redux/modules/books';
+import { goBack } from 'connected-react-router';
 
 const AddContainer = () => {
   const dispatch = useDispatch();
@@ -19,8 +20,17 @@ const AddContainer = () => {
     dispatch(addBooks(bookReq));
   };
 
+  const onGoBack = () => {
+    dispatch(goBack());
+  };
+
   return (
-    <Add loading={false} logout={logout} onSubmitAddBook={onSubmitAddBook} />
+    <Add
+      loading={false}
+      logout={logout}
+      onSubmitAddBook={onSubmitAddBook}
+      goBack={onGoBack}
+    />
   );
 };
 

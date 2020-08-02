@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import Detail from '../components/Detail';
 import { logout as logoutSaga } from '../redux/modules/auth';
 import { BookParams } from '../types';
-import { push } from 'connected-react-router';
+import { push, goBack } from 'connected-react-router';
 import useBook from '../hooks/useBook';
 
 const DetailContainer = ({ id }: BookParams) => {
@@ -25,9 +25,16 @@ const DetailContainer = ({ id }: BookParams) => {
     },
     [dispatch],
   );
+
+  const onGoBack = () => {
+    dispatch(goBack());
+  };
+
   const book = useBook(parseInt(id));
 
-  return <Detail book={book} logout={logout} goEdit={goEdit} />;
+  return (
+    <Detail book={book} logout={logout} goEdit={goEdit} goBack={onGoBack} />
+  );
 };
 
 export default DetailContainer;
