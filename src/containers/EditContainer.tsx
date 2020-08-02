@@ -5,7 +5,7 @@ import Edit from '../components/Edit';
 import { logout as logoutSaga } from '../redux/modules/auth';
 import { BookParams, BookEditReqType } from '../types';
 import useBook from '../hooks/useBook';
-import { editBookAsync } from '../redux/modules/books';
+import { editBooks } from '../redux/modules/books';
 
 const EditContainer = ({ id }: BookParams) => {
   const dispatch = useDispatch();
@@ -19,7 +19,7 @@ const EditContainer = ({ id }: BookParams) => {
   const book = useBook(parseInt(id));
   const updateBook = (editBook: BookEditReqType) => {
     console.log(updateBook, editBook);
-    dispatch(editBookAsync.request(editBook));
+    dispatch(editBooks(editBook));
   };
 
   return <Edit book={book} logout={logout} updateBook={updateBook} />;
