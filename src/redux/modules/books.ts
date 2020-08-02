@@ -8,11 +8,11 @@ import {
 import { AxiosError } from 'axios';
 import { call, put, takeEvery, takeLatest, select } from 'redux-saga/effects';
 import BookService from '../../services/BookService';
-import { getTokenFromState } from '../utils';
+import { getTokenFromState, getBooksFromState } from '../utils';
 import { push } from 'connected-react-router';
 
 //////////////////////////////////// Action ////////////////////////////////////
-const BOOKS_GETLIST = 'my-books/books/BOOKS_REQUEST' as const; // 책 목록 가져오기 Action Type
+const BOOKS_GETLIST = 'my-books/books/BOOKS_GETLIST' as const; // 책 목록 가져오기 Action Type
 const BOOKS_ADD = 'my-books/books/BOOK_ADD' as const; // 책 추가하기 Action Type
 const BOOKS_EDIT = 'my-books/books/BOOK_EDIT' as const; // 책 수정하기 Action Type
 const BOOKS_REMOVE = 'my-books/books/BOOK_REMOVE' as const; // 책 삭제하기 Action Type
@@ -85,95 +85,100 @@ const getBooksReducer = createReducer<BooksState, GETBooksAction>(
     }),
     [BOOKS_GETLIST]: (state) => ({
       ...state,
-      loading: true,
-      books: null,
-      error: null,
     }),
-    [BOOKS_ADD]: (state, action) => ({
+    [BOOKS_ADD]: (state) => ({
       ...state,
-      loading: true,
-      error: null,
     }),
-    [BOOKS_EDIT]: (state, action) => ({
+    [BOOKS_EDIT]: (state) => ({
       ...state,
-      loading: true,
-      error: null,
     }),
-    [BOOKS_REMOVE]: (state, action) => ({
+    [BOOKS_REMOVE]: (state) => ({
       ...state,
-      loading: true,
-      error: null,
     }),
   },
 );
 
 //////////////////////////////////// SAGA ////////////////////////////////////
-function* getBooksSaga(action: ReturnType<typeof getBooksAsync.request>) {
+function* getBooksSaga(action: ReturnType<typeof getBooks>) {
   try {
-    yield put(BOOKS_PENDING);
+    yield put(booksAsync.request());
     const token: string = yield select(getTokenFromState); // token 값을 가져온다.
     console.log('getBooksSaga', action, token);
     const books: BookResType[] = yield call(BookService.getBooks, token);
     console.log('getBooks : ', books);
-    yield put(getBooksAsync.success(books));
+    yield put(booksAsync.success(books));
   } catch (e) {
-    yield put(getBooksAsync.failure(e));
+    yield put(booksAsync.failure(e));
   }
 }
 
-function* addBookSaga(action: ReturnType<typeof addBookAsync.request>) {
+function* addBookSaga(action: ReturnType<typeof addBooks>) {
   try {
+    yield put(booksAsync.request());
     const token: string = yield select(getTokenFromState); // token 값을 가져온다.
-    console.log('addBookSaga', action, token);
-    const book: BookResType = yield call(
+    const books: BookResType[] = yield select(getBooksFromState); // books 값을 가져온다.
+    console.log('addBookSaga', action, token, books);
+    const addBook: BookResType = yield call(
       BookService.addBook,
       token,
       action.payload,
     );
-    console.log('addBook :', book);
-    yield put(addBookAsync.success(book));
+    console.log('addBook :', addBook);
+    const addedBooks = books.concat(addBook);
+    console.log('addedBooks:', addBooks);
+    yield put(booksAsync.success(addedBooks));
     yield put(push('/'));
   } catch (e) {
-    yield put(addBookAsync.failure(e));
+    yield put(booksAsync.failure(e));
   }
 }
 
-function* editBookSaga(action: ReturnType<typeof editBookAsync.request>) {
+function* editBookSaga(action: ReturnType<typeof editBooks>) {
   try {
+    yield put(booksAsync.request());
     const token: string = yield select(getTokenFromState); // token 값을 가져온다.
-    console.log('editBookSaga', action, token);
-    const book: BookResType = yield call(
+    const books: BookResType[] = yield select(getBooksFromState); // books 값을 가져온다.
+    console.log('editBookSaga', action, token, books);
+    const editBook: BookResType = yield call(
       BookService.editBook,
       token,
       action.payload.bookId,
       action.payload.bookReq,
     );
-    console.log('editBook :', book);
-    yield put(editBookAsync.success(book));
+    console.log('editBook :', editBook);
+    const editedBooks = books.map((book) =>
+      book.bookId === editBook.bookId ? editBook : book,
+    );
+    console.log('editedBooks : ', editedBooks);
+    yield put(booksAsync.success(editedBooks));
     yield put(push('/'));
   } catch (e) {
-    yield put(editBookAsync.failure(e));
+    yield put(booksAsync.failure(e));
   }
 }
 
-function* removeBookSaga(action: ReturnType<typeof removeBookAsync.request>) {
+function* removeBookSaga(action: ReturnType<typeof removeBooks>) {
   try {
-    const token: string = yield select(getTokenFromState);
-    console.log('removeBookSaga', action, token);
+    yield put(booksAsync.request());
+    const token: string = yield select(getTokenFromState); // token 값을 가져온다.
+    const books: BookResType[] = yield select(getBooksFromState); // books 값을 가져온다.
+    console.log('removeBookSaga', action, token, books);
     const deleteId = action.payload;
+    console.log('deleteId : ', deleteId);
     yield call(BookService.deleteBook, token, deleteId);
-    yield put(removeBookAsync.success(deleteId));
+    const removedBooks = books.filter((book) => book.bookId !== deleteId);
+    yield put(booksAsync.success(removedBooks));
     yield put(push('/'));
   } catch (e) {
-    yield put(removeBookAsync.failure(e));
+    yield put(booksAsync.failure(e));
   }
 }
 
 export function* sagas() {
-  yield takeEvery(BOOKS_REQUEST, getBooksSaga);
-  yield takeLatest(BOOK_ADD, addBookSaga);
-  yield takeLatest(BOOK_EDIT, editBookSaga);
-  yield takeLatest(BOOK_REMOVE, removeBookSaga);
+  yield takeEvery(getBooks, getBooksSaga);
+  yield takeLatest(addBooks, addBookSaga);
+  yield takeLatest(editBooks, editBookSaga);
+  yield takeLatest(removeBooks, removeBookSaga);
 }
 
 export default getBooksReducer;
