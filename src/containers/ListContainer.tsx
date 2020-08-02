@@ -5,7 +5,7 @@ import List from '../components/List';
 import { logout as logoutSaga } from '../redux/modules/auth';
 import { push } from 'connected-react-router';
 import { RootState } from '../redux/modules/rootReducer';
-import { getBooksAsync } from '../redux/modules/books';
+import { getBooksAsync, removeBookAsync } from '../redux/modules/books';
 import useToken from '../hooks/useToken';
 
 const ListContainer: React.FC = () => {
@@ -35,7 +35,7 @@ const ListContainer: React.FC = () => {
   const removeBook = useCallback(
     (bookId: number) => {
       console.log('removeBook');
-      // dispatch(removeAction);
+      dispatch(removeBookAsync.request(bookId));
     },
     [dispatch],
   );
@@ -49,8 +49,10 @@ const ListContainer: React.FC = () => {
   useEffect(() => {
     console.log('ListContainer load');
     console.log('token', token);
+    if (books) return;
+
     if (token) dispatch(getBooksAsync.request());
-  }, [dispatch, token]);
+  }, [dispatch, token, books]);
   // [project] 컨테이너에서 useDispatch, useSelector, useCallback 을 활용해서 중복없이 비동기 데이터를 보여주도록 처리했다.
 
   return (
