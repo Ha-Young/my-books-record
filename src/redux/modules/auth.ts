@@ -100,5 +100,6 @@ function* logoutSaga() {
   } finally {
     TokenService.remove();
     yield put(success(null));
+    yield put(push('/signin'));
   }
 }

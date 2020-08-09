@@ -84,9 +84,7 @@ const Detail: React.FC<DetailProps> = ({ book, logout, goEdit, goBack }) => {
   );
 
   function onEditClick() {
-    if (book && book.bookId) {
-      goEdit(book?.bookId);
-    }
+    book && goEdit(book.bookId);
   }
 };
 export default Detail;

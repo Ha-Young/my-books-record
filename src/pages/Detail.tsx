@@ -10,7 +10,7 @@ const Detail = ({ match }: RouterComponentProps<BookParams>) => {
   if (token === null) {
     return <Redirect to="/signin" />;
   }
-  return <DetailContainer id={match.params.id} />;
+  return <DetailContainer />;
 };
 
 export default Detail;

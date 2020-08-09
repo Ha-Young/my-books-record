@@ -37,7 +37,7 @@ const ListContainer: React.FC = () => {
   return (
     <>
       {error ? (
-        <p style={{ textAlign: 'center' }}>애러발생!</p>
+        logout()
       ) : (
         <List
           books={books}

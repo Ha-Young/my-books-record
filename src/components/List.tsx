@@ -58,7 +58,7 @@ const Books: React.FC<BooksProps> = ({
             title: 'Book',
             dataIndex: 'book',
             key: 'book',
-            render: (text, record) => (
+            render: (_text, record) => (
               <Book
                 bookResType={record}
                 goDetail={goDetail}

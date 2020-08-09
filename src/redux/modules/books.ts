@@ -13,14 +13,14 @@ import BookService from '../../services/BookService';
 import { getTokenFromState, getBooksFromState } from '../utils';
 
 //////////////////////////////////// Action ////////////////////////////////////
-const BOOKS_GETLIST = 'my-books/books/BOOKS_GETLIST' as const; // 책 목록 가져오기 Action Type
-const BOOKS_ADD = 'my-books/books/BOOK_ADD' as const; // 책 추가하기 Action Type
-const BOOKS_EDIT = 'my-books/books/BOOK_EDIT' as const; // 책 수정하기 Action Type
-const BOOKS_REMOVE = 'my-books/books/BOOK_REMOVE' as const; // 책 삭제하기 Action Type
+const BOOKS_GETLIST = 'my-books/books/BOOKS_GETLIST'; // 책 목록 가져오기 Action Type
+const BOOKS_ADD = 'my-books/books/BOOK_ADD'; // 책 추가하기 Action Type
+const BOOKS_EDIT = 'my-books/books/BOOK_EDIT'; // 책 수정하기 Action Type
+const BOOKS_REMOVE = 'my-books/books/BOOK_REMOVE'; // 책 삭제하기 Action Type
 
-const BOOKS_PENDING = 'my-books/books/BOOKS_PENDING' as const;
-const BOOKS_SUCCESS = 'my-books/books/BOOKS_SUCCESS' as const;
-const BOOKS_FAILURE = 'my-books/books/BOOKS_FAILURE' as const;
+const BOOKS_PENDING = 'my-books/books/BOOKS_PENDING';
+const BOOKS_SUCCESS = 'my-books/books/BOOKS_SUCCESS';
+const BOOKS_FAILURE = 'my-books/books/BOOKS_FAILURE';
 
 // AsyncAction Creator
 export const booksAsync = createAsyncAction(
@@ -68,18 +68,16 @@ const getBooksReducer = createReducer<BooksState, GETBooksAction>(
   initialState,
   {
     [BOOKS_PENDING]: (state) => ({
-      ...state,
       loading: true,
+      books: state.books,
       error: null,
     }),
     [BOOKS_SUCCESS]: (state, action) => ({
-      ...state,
       loading: false,
       books: action.payload,
       error: null,
     }),
     [BOOKS_FAILURE]: (state, action) => ({
-      ...state,
       loading: false,
       books: null,
       error: action.payload,
@@ -109,8 +107,7 @@ function* addBookSaga(action: ReturnType<typeof addBooks>) {
       token,
       action.payload,
     );
-    const addedBooks = books.concat(addBook);
-    yield put(booksAsync.success(addedBooks));
+    yield put(booksAsync.success([...books, addBook]));
     yield put(push('/'));
   } catch (e) {
     yield put(booksAsync.failure(e));
