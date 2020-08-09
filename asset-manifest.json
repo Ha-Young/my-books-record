@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/my-books-record/static/css/main.62a2e127.chunk.css",
+    "main.js": "/my-books-record/static/js/main.e1c10751.chunk.js",
+    "main.js.map": "/my-books-record/static/js/main.e1c10751.chunk.js.map",
+    "runtime-main.js": "/my-books-record/static/js/runtime-main.e4c102d8.js",
+    "runtime-main.js.map": "/my-books-record/static/js/runtime-main.e4c102d8.js.map",
+    "static/css/2.ad8fe80d.chunk.css": "/my-books-record/static/css/2.ad8fe80d.chunk.css",
+    "static/js/2.4103c4d5.chunk.js": "/my-books-record/static/js/2.4103c4d5.chunk.js",
+    "static/js/2.4103c4d5.chunk.js.map": "/my-books-record/static/js/2.4103c4d5.chunk.js.map",
+    "index.html": "/my-books-record/index.html",
+    "precache-manifest.40d747cd909d56e39fa0d2ca7b4a2bc8.js": "/my-books-record/precache-manifest.40d747cd909d56e39fa0d2ca7b4a2bc8.js",
+    "service-worker.js": "/my-books-record/service-worker.js",
+    "static/css/2.ad8fe80d.chunk.css.map": "/my-books-record/static/css/2.ad8fe80d.chunk.css.map",
+    "static/css/main.62a2e127.chunk.css.map": "/my-books-record/static/css/main.62a2e127.chunk.css.map",
+    "static/js/2.4103c4d5.chunk.js.LICENSE.txt": "/my-books-record/static/js/2.4103c4d5.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e4c102d8.js",
+    "static/css/2.ad8fe80d.chunk.css",
+    "static/js/2.4103c4d5.chunk.js",
+    "static/css/main.62a2e127.chunk.css",
+    "static/js/main.e1c10751.chunk.js"
+  ]
+}
