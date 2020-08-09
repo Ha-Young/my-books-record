@@ -1,7 +1,7 @@
 # 나의 독서 기록 사이트 구현하기
 리액트, 타입스크립트
 
-[링크]("http://Ha-Young.github.io/my-books-record")
+## [링크](http://Ha-Young.github.io/my-books-record)
 
 ## 프로젝트 소개
 
