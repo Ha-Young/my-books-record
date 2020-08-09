@@ -3,8 +3,9 @@ import { Redirect } from 'react-router-dom';
 
 import useToken from '../hooks/useToken';
 import DetailContainer from '../containers/DetailContainer';
+import { RouterComponentProps, BookParams } from '../types';
 
-const Detail = () => {
+const Detail = ({ match }: RouterComponentProps<BookParams>) => {
   const token = useToken();
   if (token === null) {
     return <Redirect to="/signin" />;

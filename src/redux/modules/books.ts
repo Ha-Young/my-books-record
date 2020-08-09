@@ -1,5 +1,52 @@
-import { BookResType } from '../../types';
+import {
+  createAsyncAction,
+  createReducer,
+  ActionType,
+  createAction,
+} from 'typesafe-actions';
+import { AxiosError } from 'axios';
+import { call, put, takeEvery, takeLatest, select } from 'redux-saga/effects';
+import { push } from 'connected-react-router';
 
+import { BookResType, BookReqType, BookEditReqType } from '../../types';
+import BookService from '../../services/BookService';
+import { getTokenFromState, getBooksFromState } from '../utils';
+
+//////////////////////////////////// Action ////////////////////////////////////
+const BOOKS_GETLIST = 'my-books/books/BOOKS_GETLIST'; // 책 목록 가져오기 Action Type
+const BOOKS_ADD = 'my-books/books/BOOK_ADD'; // 책 추가하기 Action Type
+const BOOKS_EDIT = 'my-books/books/BOOK_EDIT'; // 책 수정하기 Action Type
+const BOOKS_REMOVE = 'my-books/books/BOOK_REMOVE'; // 책 삭제하기 Action Type
+
+const BOOKS_PENDING = 'my-books/books/BOOKS_PENDING';
+const BOOKS_SUCCESS = 'my-books/books/BOOKS_SUCCESS';
+const BOOKS_FAILURE = 'my-books/books/BOOKS_FAILURE';
+
+// AsyncAction Creator
+export const booksAsync = createAsyncAction(
+  BOOKS_PENDING,
+  BOOKS_SUCCESS,
+  BOOKS_FAILURE,
+)<undefined, BookResType[], AxiosError>();
+
+export const getBooks = createAction(BOOKS_GETLIST)(); // 책 가져오기 Action Creator
+
+export const addBooks = createAction(
+  BOOKS_ADD,
+  (addBook: BookReqType) => addBook,
+)(); // 책 추가하기 Action Creator
+
+export const editBooks = createAction(
+  BOOKS_EDIT,
+  (editBook: BookEditReqType) => editBook,
+)(); // 책 수정하기 Action Creator
+
+export const removeBooks = createAction(
+  BOOKS_REMOVE,
+  (removeBookId: number) => removeBookId,
+)(); // 책 삭제하기 Action Creator
+
+//////////////////////////////////// Reducer ////////////////////////////////////
 export interface BooksState {
   books: BookResType[] | null;
   loading: boolean;
@@ -12,19 +59,102 @@ const initialState: BooksState = {
   error: null,
 };
 
-// [project] redux-action 을 이용하여, books 모듈의 액션 생성 함수와 리듀서를 작성했다.
+const actions = { getBooks, addBooks, editBooks, removeBooks };
+type GETBooksAction =
+  | ActionType<typeof booksAsync>
+  | ActionType<typeof actions>;
 
-const reducer = (state = initialState) => {
-  return state;
-};
+const getBooksReducer = createReducer<BooksState, GETBooksAction>(
+  initialState,
+  {
+    [BOOKS_PENDING]: (state) => ({
+      loading: true,
+      books: state.books,
+      error: null,
+    }),
+    [BOOKS_SUCCESS]: (state, action) => ({
+      loading: false,
+      books: action.payload,
+      error: null,
+    }),
+    [BOOKS_FAILURE]: (state, action) => ({
+      loading: false,
+      books: null,
+      error: action.payload,
+    }),
+  },
+);
 
-export default reducer;
+//////////////////////////////////// SAGA ////////////////////////////////////
+function* getBooksSaga(action: ReturnType<typeof getBooks>) {
+  try {
+    yield put(booksAsync.request());
+    const token: string = yield select(getTokenFromState); // token 값을 가져온다.
+    const books: BookResType[] = yield call(BookService.getBooks, token);
+    yield put(booksAsync.success(books));
+  } catch (e) {
+    yield put(booksAsync.failure(e));
+  }
+}
 
-// [project] 책 목록을 가져오는 saga 함수를 작성했다.
-// [project] 책을 추가하는 saga 함수를 작성했다.
-// [project] 책을 삭제하는 saga 함수를 작성했다.
-// [project] 책을 수정하는 saga 함수를 작성했다.
+function* addBookSaga(action: ReturnType<typeof addBooks>) {
+  try {
+    yield put(booksAsync.request());
+    const token: string = yield select(getTokenFromState); // token 값을 가져온다.
+    const books: BookResType[] = yield select(getBooksFromState); // books 값을 가져온다.
+    const addBook: BookResType = yield call(
+      BookService.addBook,
+      token,
+      action.payload,
+    );
+    yield put(booksAsync.success([...books, addBook]));
+    yield put(push('/'));
+  } catch (e) {
+    yield put(booksAsync.failure(e));
+  }
+}
 
-// [project] saga 함수를 실행하는 액션과 액션 생성 함수를 작성했다.
+function* editBookSaga(action: ReturnType<typeof editBooks>) {
+  try {
+    yield put(booksAsync.request());
+    const token: string = yield select(getTokenFromState); // token 값을 가져온다.
+    const books: BookResType[] = yield select(getBooksFromState); // books 값을 가져온다.
+    const editBook: BookResType = yield call(
+      BookService.editBook,
+      token,
+      action.payload.bookId,
+      action.payload.bookReq,
+    );
+    const editedBooks = books.map((book) =>
+      book.bookId === editBook.bookId ? editBook : book,
+    );
+    yield put(booksAsync.success(editedBooks));
+    yield put(push('/'));
+  } catch (e) {
+    yield put(booksAsync.failure(e));
+  }
+}
 
-export function* sagas() {}
+function* removeBookSaga(action: ReturnType<typeof removeBooks>) {
+  try {
+    yield put(booksAsync.request());
+    const token: string = yield select(getTokenFromState); // token 값을 가져온다.
+    const books: BookResType[] = yield select(getBooksFromState); // books 값을 가져온다.
+    const deleteId = action.payload;
+    yield call(BookService.deleteBook, token, deleteId);
+    const removedBooks = books.filter((book) => book.bookId !== deleteId);
+    yield put(booksAsync.success(removedBooks));
+    yield put(push('/'));
+  } catch (e) {
+    yield put(booksAsync.failure(e));
+  }
+}
+
+export function* sagas() {
+  yield takeEvery(getBooks, getBooksSaga);
+  yield takeLatest(addBooks, addBookSaga);
+  yield takeLatest(editBooks, editBookSaga);
+  yield takeLatest(removeBooks, removeBookSaga);
+}
+
+export default getBooksReducer;
